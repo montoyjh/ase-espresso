@@ -265,8 +265,11 @@ class SiteConfig(object):
 
     def get_proc_mpi_command(self, workdir, program, aslist=True):
         'Return a command as list to execute `program` through MPI per proc'
-
-        if self.usehostfile:
+        
+        override = os.environ.get("ESP_CMD_OVERRIDE", None)
+        if override:
+            command = override
+        elif self.usehostfile:
             command = 'mpirun --hostfile {0:s} '.format(self.get_hostfile()) +\
                       '-np {0:d} '.format(self.nprocs) +                      \
                       '-wdir {0:s} {1:s}'.format(workdir, program)
